@@ -204,7 +204,11 @@ namespace DAQ.Environment
                     FileSystem = new FileSystem();
                     Debug = false;
                     break;
-
+                case "PH-LAB-015":
+                    Hardware = new NavigatorHardware();
+                    FileSystem = new NavCompFileSystem();
+                    Debug = false;
+                    break;
 				default:
 					Hardware = new EDMHardware();
 					FileSystem = new FileSystem();

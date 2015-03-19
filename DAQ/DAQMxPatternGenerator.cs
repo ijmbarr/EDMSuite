@@ -118,7 +118,10 @@ namespace DAQ.HAL
                         clockFrequency,
                         0.5
                         );
-                    counterTask.Timing.SampleQuantityMode = SampleQuantityMode.ContinuousSamples;
+
+                    //counterTask.Timing.SampleQuantityMode = SampleQuantityMode.ContinuousSamples;
+                    //Wat? IB 2105
+                    counterTask.Timing.ConfigureImplicit(SampleQuantityMode.ContinuousSamples);
                     counterTask.Start();
 
                     clockSource = device + (string)Environs.Hardware.GetInfo("PGClockCounter") + "InternalOutput";

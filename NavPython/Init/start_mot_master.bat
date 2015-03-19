@@ -1,0 +1,1 @@
+start ..\..\MOTMaster\bin\Navigator\MOTMaster.exe

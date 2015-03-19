@@ -85,19 +85,99 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Navigator|AnyCPU'">
+    <OutputPath>bin\Navigator\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Decelerator|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Decelerator\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EDM|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\EDM\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EDMAnalysis|x86'">
+    <OutputPath>bin\x86\EDMAnalysis\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Buffer|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Buffer\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Sympathetic|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Sympathetic\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SrF|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\SrF\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'BufferClassic|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\BufferClassic\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Navigator|x86'">
+    <OutputPath>bin\x86\Navigator\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NationalInstruments.AxCWIMAQControlsLib.Interop, Version=9.0.0.0, Culture=neutral, PublicKeyToken=4544464cdeaab541" />
-    <Reference Include="NationalInstruments.Common, Version=9.1.40.159, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL" />
-    <Reference Include="NationalInstruments.UI, Version=9.0.40.292, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL">
+    <Reference Include="NationalInstruments.Common, Version=13.0.35.190, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=MSIL" />
+    <Reference Include="NationalInstruments.UI, Version=9.1.40.204, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\National Instruments\MeasurementStudioVS2010\DotNET\Assemblies\Current\NationalInstruments.UI.dll</HintPath>
+      <HintPath>..\..\Program Files (x86)\National Instruments\MeasurementStudioVS2010\DotNET\Assemblies\Current\NationalInstruments.UI.dll</HintPath>
     </Reference>
-    <Reference Include="NationalInstruments.UI.WindowsForms, Version=9.0.40.292, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL">
+    <Reference Include="NationalInstruments.UI.WindowsForms, Version=9.1.40.204, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\National Instruments\MeasurementStudioVS2010\DotNET\Assemblies\Current\NationalInstruments.UI.WindowsForms.dll</HintPath>
+      <HintPath>..\..\Program Files (x86)\National Instruments\MeasurementStudioVS2010\DotNET\Assemblies\Current\NationalInstruments.UI.WindowsForms.dll</HintPath>
     </Reference>
-    <Reference Include="NationalInstruments.Vision.Acquisition.Imaqdx, Version=3.40.35.49153, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=MSIL" />
-    <Reference Include="NationalInstruments.Vision.Common, Version=11.0.35.102, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=x86" />
+    <Reference Include="NationalInstruments.VisaNS, Version=13.0.40.167, Culture=neutral, PublicKeyToken=dc6ad606294fc298, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files (x86)\National Instruments\MeasurementStudioVS2010\DotNET\Assemblies\Current\NationalInstruments.VisaNS.dll</HintPath>
+    </Reference>
+    <Reference Include="NationalInstruments.Vision">
+      <HintPath>..\..\Program Files (x86)\National Instruments\MeasurementStudioVS2010\DotNET\Assemblies (64-bit)\Current\NationalInstruments.Vision.dll</HintPath>
+    </Reference>
+    <Reference Include="NationalInstruments.Vision.Acquisition.Imaqdx, Version=3.40.35.49153, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files (x86)\National Instruments\MeasurementStudioVS2008back\DotNET\Assemblies\Current\NationalInstruments.Vision.Acquisition.Imaqdx.dll</HintPath>
+    </Reference>
+    <Reference Include="NationalInstruments.Vision.Common, Version=13.1.35.100, Culture=neutral, PublicKeyToken=18cbae0f9955702a, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files (x86)\National Instruments\MeasurementStudioVS2008back\DotNET\Assemblies\Current\NationalInstruments.Vision.Common.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System" />

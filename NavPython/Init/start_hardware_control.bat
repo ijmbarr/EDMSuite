@@ -1,0 +1,1 @@
+start ..\..\NavHardwareControl\bin\Navigator\NavHardwareControl.exe

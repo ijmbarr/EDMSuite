@@ -21,7 +21,6 @@ using NationalInstruments.Vision.Acquisition.Imaqdx;
 using NationalInstruments.Vision.Internal;
 using NationalInstruments.Vision.WindowsForms.Internal;
 
-
 namespace IMAQ
 {
     /// <summary>
@@ -175,11 +174,10 @@ namespace IMAQ
                 {
                     byteList.Add((i.ImageToArray()).U8);
 
-                   // if (windowShowing)
-                    //{
-                      //  imageWindow.AttachToViewer(i);
-
-                   // }
+                    if (windowShowing)
+                    {
+                        imageWindow.AttachToViewer(i);
+                    }
 
                 }
                 state = CameraState.FREE;

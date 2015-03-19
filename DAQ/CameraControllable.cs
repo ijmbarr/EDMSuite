@@ -17,5 +17,6 @@ namespace DAQ
         bool IsReadyForAcquisition();
         void SaveImage(String dataStoreFilePath);
         void SaveImageWithDialog();
+        bool doesCameraExist();
     }
 }

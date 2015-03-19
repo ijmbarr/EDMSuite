@@ -28,26 +28,28 @@ namespace MOTMaster
 
         public void StoreRun(string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[,] imageData)
+            string cameraAttributesPath, byte[,] imageData, string EID)
         {
-            string fileTag = getDataID(element, batchNumber);
+            string fileTag = EID;
+            string saveSubfolder = checkSaveFolder(saveFolder);
 
-            saveToFiles(fileTag, saveFolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData);
+            saveToFiles(fileTag, saveSubfolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData);
 
-            string[] files = putCopiesOfFilesToZip(saveFolder, fileTag);
+            string[] files = putCopiesOfFilesToZip(saveSubfolder, fileTag);
 
             //deleteFiles(saveFolder, fileTag);
             deleteFiles(files);
         }
         public void StoreRun(string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[][,] imageData)
+            string cameraAttributesPath, byte[][,] imageData, string EID)
         {
-            string fileTag = getDataID(element, batchNumber);
+            string fileTag = EID;
+            string saveSubfolder = checkSaveFolder(saveFolder);
 
-            saveToFiles(fileTag, saveFolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData);
+            saveToFiles(fileTag, saveSubfolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData);
 
-            string[] files = putCopiesOfFilesToZip(saveFolder, fileTag);
+            string[] files = putCopiesOfFilesToZip(saveSubfolder, fileTag);
 
             //deleteFiles(saveFolder, fileTag);
             deleteFiles(files);
@@ -151,6 +153,11 @@ namespace MOTMaster
 
         private void storeImage(string savePath, byte[,] imageData)
         {
+            if (imageData == null) //Kill it if no images
+            {
+                return;
+            }
+
             int width = imageData.GetLength(1);
             int height = imageData.GetLength(0);
             byte[] pixels = new byte[width * height];
@@ -217,6 +224,30 @@ namespace MOTMaster
             string id = element + dateTag + batchTag
                 + "_" + subTag.ToString().PadLeft(3, '0');
             return id;
+        }
+
+        string checkSaveFolder(string saveFolder)
+        {
+            string day = DateTime.Now.ToString("dd");
+            string month = DateTime.Now.ToString("MM");
+            string year = DateTime.Now.ToString("yyyy");
+
+            if (!Directory.Exists(saveFolder + "\\" + year))
+            {
+                Directory.CreateDirectory(saveFolder + "\\" + year);
+            }
+
+            if (!Directory.Exists(saveFolder + "\\" + year + "\\" + month))
+            {
+                Directory.CreateDirectory(saveFolder + "\\" + year + "\\" + month);
+            }
+
+            if (!Directory.Exists(saveFolder + "\\" + year + "\\" + month + "\\" + day))
+            {
+                Directory.CreateDirectory(saveFolder + "\\" + year + "\\" + month + "\\" + day);
+            }
+
+            return saveFolder + "\\" + year + "\\" + month + "\\" + day + "\\";
         }
 
         
