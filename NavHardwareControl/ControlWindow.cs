@@ -11,6 +11,16 @@ namespace NavHardwareControl
     /// UPDATE FOR NAV CONTROLLER:
     /// This is more or less a direct copy of SHC, addapted to our needs. 
     /// 
+
+    /// 
+    /// HOW TO ADD A CHANNEL:
+    ///  1. add channel + calibration to hardware file
+    ///  2. add to controller
+    ///  3. add to controller window 
+    ///  4. add controller window component to list of DOCheckBoxes or AOTextBoxes (found in ControllerWindow()).
+    ///  
+    /// 
+    /// OLD:
     /// Front panel for the sympathetic hardware controller. Everything is just stuffed in there. No particularly
     /// clever structure. This class just hands everything straight off to the controller. It has a few
     /// thread safe wrappers so that remote calls can safely manipulate the front panel.
@@ -28,7 +38,9 @@ namespace NavHardwareControl
         {
             InitializeComponent();
             AOTextBoxes["testAnalogChannel"] = testAnalogLine;
-
+            AOTextBoxes["aom1freq"] = AOM1;
+            AOTextBoxes["motShutter"] = motShutterTextBox;
+            AOTextBoxes["imagingShutter"] = imageShutterTextBox;
             DOCheckBoxes["testDigitalChannel"] = testChannel;
 
         }
@@ -40,8 +52,14 @@ namespace NavHardwareControl
 
         private void WindowLoaded(object sender, EventArgs e)
         {
-            controller.ControllerLoaded();
-            
+            try
+            {
+                controller.ControllerLoaded();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         #endregion
@@ -61,6 +79,11 @@ namespace NavHardwareControl
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.testChannel = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
+            this.motShutterTextBox = new System.Windows.Forms.TextBox();
+            this.coil0GroupBox = new System.Windows.Forms.GroupBox();
+            this.AOM1 = new System.Windows.Forms.TextBox();
+            this.coil0Label0 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.testAnalogLine = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -80,10 +103,13 @@ namespace NavHardwareControl
             this.label1 = new System.Windows.Forms.Label();
             this.updateHardwareButton = new System.Windows.Forms.Button();
             this.consoleRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.imageShutterTextBox = new System.Windows.Forms.TextBox();
             this.shcTabs.SuspendLayout();
             this.tabCamera.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.coil0GroupBox.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -165,6 +191,11 @@ namespace NavHardwareControl
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.imageShutterTextBox);
+            this.tabPage2.Controls.Add(this.label4);
+            this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Controls.Add(this.motShutterTextBox);
+            this.tabPage2.Controls.Add(this.coil0GroupBox);
             this.tabPage2.Controls.Add(this.label2);
             this.tabPage2.Controls.Add(this.testAnalogLine);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -174,6 +205,51 @@ namespace NavHardwareControl
             this.tabPage2.TabIndex = 2;
             this.tabPage2.Text = "Analog Lines";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(28, 55);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(62, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "Mot Shutter";
+            // 
+            // motShutterTextBox
+            // 
+            this.motShutterTextBox.Location = new System.Drawing.Point(99, 52);
+            this.motShutterTextBox.Name = "motShutterTextBox";
+            this.motShutterTextBox.Size = new System.Drawing.Size(100, 20);
+            this.motShutterTextBox.TabIndex = 15;
+            // 
+            // coil0GroupBox
+            // 
+            this.coil0GroupBox.Controls.Add(this.AOM1);
+            this.coil0GroupBox.Controls.Add(this.coil0Label0);
+            this.coil0GroupBox.Location = new System.Drawing.Point(263, 18);
+            this.coil0GroupBox.Name = "coil0GroupBox";
+            this.coil0GroupBox.Size = new System.Drawing.Size(225, 45);
+            this.coil0GroupBox.TabIndex = 14;
+            this.coil0GroupBox.TabStop = false;
+            this.coil0GroupBox.Text = "AOM 1";
+            // 
+            // AOM1
+            // 
+            this.AOM1.Location = new System.Drawing.Point(99, 17);
+            this.AOM1.Name = "AOM1";
+            this.AOM1.Size = new System.Drawing.Size(100, 20);
+            this.AOM1.TabIndex = 8;
+            this.AOM1.Text = "0";
+            // 
+            // coil0Label0
+            // 
+            this.coil0Label0.AutoSize = true;
+            this.coil0Label0.Location = new System.Drawing.Point(40, 20);
+            this.coil0Label0.Name = "coil0Label0";
+            this.coil0Label0.Size = new System.Drawing.Size(50, 13);
+            this.coil0Label0.TabIndex = 7;
+            this.coil0Label0.Text = "Freq (Hz)";
+            this.coil0Label0.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label2
             // 
@@ -327,6 +403,22 @@ namespace NavHardwareControl
             this.consoleRichTextBox.TabIndex = 23;
             this.consoleRichTextBox.Text = "";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 98);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(81, 13);
+            this.label4.TabIndex = 17;
+            this.label4.Text = "Imaging Shutter";
+            // 
+            // imageShutterTextBox
+            // 
+            this.imageShutterTextBox.Location = new System.Drawing.Point(99, 91);
+            this.imageShutterTextBox.Name = "imageShutterTextBox";
+            this.imageShutterTextBox.Size = new System.Drawing.Size(100, 20);
+            this.imageShutterTextBox.TabIndex = 18;
+            // 
             // ControlWindow
             // 
             this.ClientSize = new System.Drawing.Size(794, 419);
@@ -347,6 +439,8 @@ namespace NavHardwareControl
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.coil0GroupBox.ResumeLayout(false);
+            this.coil0GroupBox.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -431,6 +525,10 @@ namespace NavHardwareControl
         private Label label2;
         private TextBox testAnalogLine;
 
+        private GroupBox coil0GroupBox;
+        public TextBox AOM1;
+        private Label coil0Label0;
+
         #endregion
 
         #region Click Handlers
@@ -470,11 +568,14 @@ namespace NavHardwareControl
         }
         public double ReadAnalog(string channelName)
         {
+            
             return double.Parse(AOTextBoxes[channelName].Text);
         }
         public void SetAnalog(string channelName, double value)
         {
-            setTextBox(AOTextBoxes[channelName], Convert.ToString(value));
+            
+                setTextBox(AOTextBoxes[channelName], Convert.ToString(value));
+    
         }
         public bool ReadDigital(string channelName)
         {
@@ -539,6 +640,16 @@ namespace NavHardwareControl
             controller.StartCameraControl();
         }
         #endregion
+
+        private Label label3;
+        private TextBox motShutterTextBox;
+        private TextBox imageShutterTextBox;
+        private Label label4;
+
+
+       
+
+
 
 
 

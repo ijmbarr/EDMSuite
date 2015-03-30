@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.imageViewer = new NationalInstruments.Vision.WindowsForms.ImageViewer();
             this.consoleRichTextBox = new System.Windows.Forms.RichTextBox();
             this.hScrollBar = new System.Windows.Forms.HScrollBar();
@@ -36,7 +35,8 @@
             // 
             // imageViewer
             // 
-            this.imageViewer.ActiveTool = NationalInstruments.Vision.WindowsForms.ViewerTools.ZoomIn;
+            this.imageViewer.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.imageViewer.ActiveTool = NationalInstruments.Vision.WindowsForms.ViewerTools.Selection;
             this.imageViewer.AutoSize = true;
             this.imageViewer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.imageViewer.Location = new System.Drawing.Point(-2, 0);
@@ -57,9 +57,6 @@
             this.consoleRichTextBox.TabIndex = 24;
             this.consoleRichTextBox.Text = "";
             // 
-           
-           
-
             // hScrollBar
             // 
             this.hScrollBar.Location = new System.Drawing.Point(0, 425);
@@ -67,7 +64,6 @@
             this.hScrollBar.Size = new System.Drawing.Size(791, 17);
             this.hScrollBar.TabIndex = 25;
             this.hScrollBar.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar_Scroll);
-            
             // 
             // ImageViewerWindow
             // 

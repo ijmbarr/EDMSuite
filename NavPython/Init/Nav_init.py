@@ -8,11 +8,14 @@ from System.IO import Path
 
 sys.path.append(Path.GetFullPath("NavHardwareControl\\bin\\Navigator"))
 sys.path.append(Path.GetFullPath("MOTMaster\\bin\\Navigator"))
+sys.path.append(Path.GetFullPath("NavAnalysis\\bin\\Debug"))
+
 
 clr.AddReferenceToFile("NavHardwareControl.exe")
 clr.AddReferenceToFile("MOTMaster.exe")
 clr.AddReferenceToFile("DAQ.dll")
 clr.AddReferenceToFile("SharedCode.dll")
+clr.AddReferenceToFile("NavAnalysis.exe")
 
 # Load some system assemblies that we'll need
 clr.AddReference("System.Drawing")
@@ -34,13 +37,16 @@ class typedproxy(object):
 # create connections to the control programs
 import System
 import NavHardwareControl
-import MOTMaster 	
+import MOTMaster
+import NavAnalysis  	
 
 hc = typedproxy(System.Activator.GetObject(NavHardwareControl.Controller, 'tcp://localhost:1172/controller.rem'), NavHardwareControl.Controller)
 mm = typedproxy(System.Activator.GetObject(MOTMaster.Controller, 'tcp://localhost:1187/controller.rem'), MOTMaster.Controller)
+anal = typedproxy(System.Activator.GetObject(NavAnalysis.Controller, 'tcp://localhost:1188/controller.rem'), NavAnalysis.Controller)
 
 
 print "hc object now exists"
 print "mm object now exists"
+print "anal object now exists"
 
 execfile("NavPython\\Init\\useful_shit.py")

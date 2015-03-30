@@ -260,6 +260,10 @@
       <Project>{FCE9FC5D-8BC1-4517-B4F6-AA446831A930}</Project>
       <Name>IMAQ</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NavAnalysis\NavAnalysis.csproj">
+      <Project>{6E8BEF90-E8CB-41F4-BC08-B53B55216D4E}</Project>
+      <Name>NavAnalysis</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharedCode\SharedCode.csproj">
       <Project>{BA0A0540-3F1C-483B-A180-CB78DF424F15}</Project>
       <Name>SharedCode</Name>

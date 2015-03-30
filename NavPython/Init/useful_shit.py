@@ -7,10 +7,12 @@ import System
 clr.ImportExtensions(System.Linq)
 from System import *
 from System.Collections.Generic import Dictionary,List
+
+import os
 import glob
+from time import sleep
 
-
-script_path = "NavMMScripts\\"
+script_path = "C:\\EDMSuite\\NavMMScripts\\"
 settings_path = "C:\\Data\\Settings\\NavigatorHardwareController\\"
 
 
@@ -44,7 +46,7 @@ def GetChannels():
 	return [c for c in channels]
 	
 def GetScripts():
-	return glob.glob(script_path + "*.cs")
+	return [os.path.basename(x) for x in glob.glob(script_path + "*.cs")]
 	
 def GetSavedParameters():
 	return glob.glob(settings_path + "*.json")
@@ -54,10 +56,17 @@ def LoadParameters(file):
 	if returnString != "":
 		print returnString
 		
-def RunScript(scriptName, parameters, save=False):
+def RunScript(scriptName, parameters={}, save=False):
 	paramDict = Dictionary[String, Object]()
 	for k,v in parameters.items():
 		paramDict.Add(k, v)
-	returnString = mm.RemoteRun(scriptName, paramDict, save)
+	returnString = mm.RemoteRun(script_path + scriptName, paramDict, save)
 	print returnString
-	
+
+f0 = "C:\\Data\\Nav\\data\\2015\\03\\27\\20150327_172746\\"
+fz = "C:\\Data\\Nav\\data\\2015\\03\\27\\20150327_172746.zip"
+f1 = "20150327_172746_0.png"
+f2 = "20150327_172746_1.png"
+
+t = lambda : anal.ComputeAbsImageFromFile(f0 + f1,f0 + f2)
+v = lambda : anal.ComputeAbsImageFromZip(fz, f1, f2)

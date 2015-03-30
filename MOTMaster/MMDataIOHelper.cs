@@ -9,6 +9,8 @@ using System.IO.Compression;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Forms;
+using System.Globalization;
+
 
 namespace MOTMaster
 {
@@ -248,6 +250,15 @@ namespace MOTMaster
             }
 
             return saveFolder + "\\" + year + "\\" + month + "\\" + day + "\\";
+        }
+
+        public string EID2Path(string basePath, string EID)
+        {
+            DateTime EIDTime = DateTime.ParseExact(EID, "yyyyMMdd_HHmmss", CultureInfo.InvariantCulture);
+            string day = EIDTime.ToString("dd");
+            string month = EIDTime.ToString("MM");
+            string year = EIDTime.ToString("yyyy");
+            return basePath + "\\" + year + "\\" + month + "\\" + day + "\\";
         }
 
         

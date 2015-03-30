@@ -20,6 +20,7 @@ using DAQ.Environment;
 using DAQ.TransferCavityLock;
 
 using IMAQ;
+using NavAnalysis;
 
 using Newtonsoft.Json;
 
@@ -64,7 +65,7 @@ namespace NavHardwareControl
         #region Constants
         //Put any constants and stuff here
 
-        private static string cameraAttributesPath = (string)Environs.FileSystem.Paths["cameraAttributesPath"];
+        private static string cameraAttributesPath = (string)Environs.FileSystem.Paths["CameraAttributesPath"];
         private static string profilesPath = (string)Environs.FileSystem.Paths["settingsPath"] + "\\NavigatorHardwareController\\";
 
         private static Hashtable calibrations = Environs.Hardware.Calibrations;
@@ -83,6 +84,9 @@ namespace NavHardwareControl
         
         // Declare that there will be a controlWindow
         ControlWindow controlWindow;
+
+        //Add the window for analysis
+        AnalWindow analWindow;
 
         //private bool sHCUIControl;
         public enum HCUIControlState { OFF, LOCAL, REMOTE };
@@ -122,8 +126,10 @@ namespace NavHardwareControl
             //      steppingBBiasAnalogOutputTask = CreateAnalogOutputTask("steppingBBias");
 
             CreateAnalogOutputTask("testAnalogChannel");
-
-            
+            CreateAnalogOutputTask("aom1freq");
+            CreateAnalogOutputTask("motShutter");
+            CreateAnalogOutputTask("imagingShutter");
+         
             //CreateAnalogInputTask("testInput", -10, 10);
 
 
@@ -131,7 +137,8 @@ namespace NavHardwareControl
             controlWindow = new ControlWindow();
             controlWindow.controller = this;
             
-
+            
+        
             HCState = HCUIControlState.OFF;
 
              Application.Run(controlWindow);
@@ -147,11 +154,17 @@ namespace NavHardwareControl
             {
                 foreach (KeyValuePair<string, double> pair in loadedState.analogs)
                 {
-                    stateRecord.analogs[pair.Key] = pair.Value;
+                    if (stateRecord.analogs.ContainsKey(pair.Key))
+                    {
+                        stateRecord.analogs[pair.Key] = pair.Value;
+                    }
                 }
                 foreach (KeyValuePair<string, bool> pair in loadedState.digitals)
                 {
-                    stateRecord.digitals[pair.Key] = pair.Value;
+                    if (stateRecord.digitals.ContainsKey(pair.Key))
+                    {
+                        stateRecord.digitals[pair.Key] = pair.Value;
+                    }
                 }
             }
          
@@ -590,7 +603,14 @@ namespace NavHardwareControl
         {
             foreach (KeyValuePair<string, double> pairs in state.analogs)
             {
-                controlWindow.SetAnalog(pairs.Key, (double)pairs.Value);
+                try
+                {
+                    controlWindow.SetAnalog(pairs.Key, (double)pairs.Value);
+                }
+                catch 
+                {
+                    MessageBox.Show("Some parameters couldn't be loaded, check the parameter file in the settings folder");
+                }
             }
         }
         private void setUIDigitals(HardwareState state)
@@ -692,6 +712,7 @@ namespace NavHardwareControl
             {
                 ImageController = new CameraController("cam0");
                 ImageController.Initialize();
+                ImageController.SetCameraAttributes(cameraAttributesPath);
                 ImageController.PrintCameraAttributesToConsole();
                 cameraLoaded = true;
             }

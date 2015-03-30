@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Linq;
 
 
 using DAQ.HAL;
@@ -163,6 +164,8 @@ namespace IMAQ
                 
                 imaqdxSession.Sequence(images, numberOfShots);
                 watch.Stop();
+
+
                 if (windowShowing)
                 {
                 long interval = watch.ElapsedMilliseconds;
@@ -180,11 +183,10 @@ namespace IMAQ
                     }
 
                 }
+
                 state = CameraState.FREE;
 
                 return byteList.ToArray();
-                
-                
             }
             catch (ImaqdxException e)
             {
@@ -221,8 +223,8 @@ namespace IMAQ
 
         public void PrintCameraAttributesToConsole()
         {
-            imageWindow.WriteToConsole(imaqdxSession.Attributes.WriteAttributesToString());
             imageWindow.WriteToConsole("Attributes loaded in camera:");
+            imageWindow.WriteToConsole(imaqdxSession.Attributes.WriteAttributesToString());
         }
 
         public string SetCameraAttributes(string newPath)
@@ -230,6 +232,8 @@ namespace IMAQ
             lock (this)
             {
                 imaqdxSession.Attributes.ReadAttributesFromFile(newPath);
+                imageWindow.WriteToConsole("Attributes loaded in camera from " + newPath);
+                imageWindow.WriteToConsole(imaqdxSession.Attributes.WriteAttributesToString());
             }
             return newPath;
         }

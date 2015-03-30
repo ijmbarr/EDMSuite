@@ -13,6 +13,7 @@ namespace DAQ
             Paths.Add("settingsPath", "c:\\Data\\Settings");
             Paths.Add("MOTMasterDataPath", "c:\\Data\\Nav\\data\\");
             Paths.Add("fakeData", "c:\\Data\\Examples");
+
             Paths.Add("CameraAttributesPath", "c:\\Data\\Settings\\CameraAttributes.icd");
             Paths.Add("CameraAttributesPathTrigger", "c:\\Data\\Settings\\CameraAttributesTrigger.icd");
 

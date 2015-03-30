@@ -17,9 +17,9 @@ namespace DAQ.HAL
 
             //Temporary stuff to deal with unknown EDMS bullshit
             string daq = (string)Boards["multiDAQ"];
-            Info.Add("pgBoard", "/DigitalIO");
+            Info.Add("pgBoard", "/MultiDAQ");
             Info.Add("PGClockCounter", "/ctr0");
-            Info.Add("PGType", "dedicated");
+            Info.Add("PGType", "integrated");
             Info.Add("Element", "Rb");
             AddDigitalOutputChannel("testDigitalChannel", daq, 0, 0);
             AddDigitalOutputChannel("AnalogPatternTrigger", daq, 0, 1);
@@ -34,20 +34,17 @@ namespace DAQ.HAL
             //map the analogue channels
             string analogBoard = (string)Boards["analogOut"];
             //Timing and trigger
-            //AddDigitalInputChannel("AOPatternTrigger", analogBoard, 0, 0);
-            //AddDigitalInputChannel("AOClockSource", analogBoard, 0, 1);
             Info.Add("AOClockSource", analogBoard + "/PFI1");
             Info.Add("AOPatternTrigger", analogBoard + "/PFI0");
             //Other stuff
             AddAnalogOutputChannel("testAnalogChannel", analogBoard + "/ao0");
-            AddAnalogOutputChannel("xbiasCurrent", analogBoard + "/ao1");
-            AddAnalogOutputChannel("ybiasCurrent", analogBoard + "/ao2");
-            AddAnalogOutputChannel("zbiasCurrent", analogBoard + "/ao3");
-            AddAnalogOutputChannel("coolingDetuning", analogBoard + "/ao4");
-            AddAnalogOutputChannel("coolingPower", analogBoard + "/ao5");
-            AddAnalogOutputChannel("repumpDetuning", analogBoard + "/ao6");
-            AddAnalogOutputChannel("repumpPower", analogBoard + "/ao7");
+            
 
+            AddAnalogOutputChannel("aom1freq", analogBoard + "/ao1");
+            AddCalibration("aom1freq", new LinearCalibration((1/8.876),40.343,0,0,130));
+
+            AddAnalogOutputChannel("motShutter", analogBoard + "/ao2");
+            AddAnalogOutputChannel("imagingShutter", analogBoard + "/ao3");
             //add the camera
             Instruments.Add("motCam", "/cam0");
 

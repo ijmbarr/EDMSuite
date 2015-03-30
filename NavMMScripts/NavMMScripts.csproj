@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbsImaging.cs" />
+    <Compile Include="AbsImagingDelay.cs" />
+    <Compile Include="shutterTest.cs" />
     <Compile Include="test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="testCamera.cs" />

@@ -33,6 +33,8 @@ using NationalInstruments.UI;
 using NationalInstruments.UI.WindowsForms;
 using System.Runtime.Serialization.Formatters.Binary;
 
+using NavAnalysis;
+
 namespace MOTMaster
 {
     /// <summary>
@@ -72,6 +74,7 @@ namespace MOTMaster
         CameraControllable camera;
         TranslationStageControllable tstage;
         ExperimentReportable experimentReporter;
+        IAnalysis analyzer;
 
         MMDataIOHelper ioHelper;
 
@@ -104,6 +107,9 @@ namespace MOTMaster
 
             experimentReporter = (ExperimentReportable)Activator.GetObject(typeof(ExperimentReportable),
                 "tcp://localhost:1172/controller.rem");
+
+            analyzer = (IAnalysis)Activator.GetObject(typeof(IAnalysis),
+                "tcp://localhost:1188/controller.rem");
 
             
             ioHelper = new MMDataIOHelper(motMasterDataPath, 
@@ -251,8 +257,10 @@ namespace MOTMaster
             //Keeps the hardwared used by MM changable using parameter settings in the script
             bool needsCamera = script.Parameters.Keys.Contains("NeedsCamera") && (bool)script.Parameters["NeedsCamera"];
             bool needsTranslationStage = script.Parameters.Keys.Contains("NeedsTranslationStage") && (bool)script.Parameters["NeedsTranslationStage"];
+            bool runAnalysis = script.Parameters.Keys.Contains("AbsAnalysis") && (bool)script.Parameters["AbsAnalysis"];
 
-            string returnString = "Trying to run " + EID + "/n";
+
+            string returnString = "Trying to run " + EID + "\n";
 
             if (needsCamera && !camera.doesCameraExist())
             {
@@ -320,7 +328,14 @@ namespace MOTMaster
                 MessageBox.Show("Unable to load pattern. \n Check that the script file exists and that it compiled successfully");
             }
 
-            return EID + "Run Completed";
+            if (runAnalysis)
+            {
+                string zipFilePath = ioHelper.EID2Path(motMasterDataPath, EID) + EID + ".zip";
+                //MessageBox.Show("Calculating the Absorption Image");
+                analyzer.ComputeAbsImageFromZip(zipFilePath, EID + "_0.png", EID + "_1.png");
+            }
+
+            return returnString + "\n Run Completed";
         }
         
         #endregion
