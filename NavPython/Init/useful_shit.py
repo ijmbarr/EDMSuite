@@ -70,3 +70,20 @@ f2 = "20150327_172746_1.png"
 
 t = lambda : anal.ComputeAbsImageFromFile(f0 + f1,f0 + f2)
 v = lambda : anal.ComputeAbsImageFromZip(fz, f1, f2)
+
+def findDelayTimes(openMax,closeMax,imDelay):
+	for openTime in range(0,openMax,5):
+		for closeTime in range(0,closeMax,5):
+			RunScript("AbsImagingDelay.cs",{"imageDelay":imDelay,"openDelay":openTime,"closeDelay":closeTime},True)
+			
+def aomSweep(startFreq,endFreq):
+	freqVal = startFreq
+	while(1):
+		if (freqVal<endFreq):
+			SetChannel("aom1freq",freqVal)
+			freqVal+=1.0
+			sleep(0.2)
+		else:
+			freqVal = startFreq
+			sleep(0.2)
+	

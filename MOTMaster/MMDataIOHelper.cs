@@ -30,26 +30,30 @@ namespace MOTMaster
 
         public void StoreRun(string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[,] imageData, string EID)
+            string cameraAttributesPath, byte[,] imageData, string EID,
+            Dictionary<String, Object> analysisReport)
         {
             string fileTag = EID;
             string saveSubfolder = checkSaveFolder(saveFolder);
 
-            saveToFiles(fileTag, saveSubfolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData);
+            saveToFiles(fileTag, saveSubfolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData, analysisReport);
 
             string[] files = putCopiesOfFilesToZip(saveSubfolder, fileTag);
 
             //deleteFiles(saveFolder, fileTag);
             deleteFiles(files);
         }
+
+
         public void StoreRun(string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[][,] imageData, string EID)
+            string cameraAttributesPath, byte[][,] imageData, string EID,
+            Dictionary<String, Object> analysisReport)
         {
             string fileTag = EID;
             string saveSubfolder = checkSaveFolder(saveFolder);
 
-            saveToFiles(fileTag, saveSubfolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData);
+            saveToFiles(fileTag, saveSubfolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData, analysisReport);
 
             string[] files = putCopiesOfFilesToZip(saveSubfolder, fileTag);
 
@@ -83,7 +87,7 @@ namespace MOTMaster
         }
         private void saveToFiles(string fileTag, string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[,] imageData)
+            string cameraAttributesPath, byte[,] imageData, Dictionary<String, Object> analysisReport)
         {
             storeDictionary(saveFolder + fileTag + "_parameters.txt", dict);
             File.Copy(pathToPattern, saveFolder + fileTag + "_script.cs");
@@ -91,10 +95,12 @@ namespace MOTMaster
             storeCameraAttributes(saveFolder + fileTag + "_cameraParameters.txt", cameraAttributesPath);
             storeImage(saveFolder + fileTag, imageData);
             storeDictionary(saveFolder + fileTag + "_hardwareReport.txt", report);
+            storeAnalysis(saveFolder, fileTag, analysisReport);
         }
+
         private void saveToFiles(string fileTag, string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[][,] imageData)
+            string cameraAttributesPath, byte[][,] imageData, Dictionary<String, Object> analysisReport)
         {
             storeDictionary(saveFolder + fileTag + "_parameters.txt", dict);
             File.Copy(pathToPattern, saveFolder + fileTag + "_script.cs");
@@ -102,6 +108,7 @@ namespace MOTMaster
             storeCameraAttributes(saveFolder + fileTag + "_cameraParameters.txt", cameraAttributesPath);
             storeImage(saveFolder + fileTag, imageData);
             storeDictionary(saveFolder + fileTag + "_hardwareReport.txt", report);
+            storeAnalysis(saveFolder, fileTag, analysisReport);
         }
 
         public string SelectSavedScriptPathDialog()
@@ -139,7 +146,7 @@ namespace MOTMaster
             Directory.Delete(folderPath, true);
         }
 
-
+        #region store specific stuff
         private void storeCameraAttributes(string savePath, string attributesPath)
         {
             File.Copy(attributesPath, savePath);
@@ -210,8 +217,30 @@ namespace MOTMaster
 
         }
 
-        
-        
+        public void storeAnalysis(string filepath, string fileNameHeader, Dictionary<string, object> dict)
+        {
+            Dictionary<string, object> otherDict = new Dictionary<string, object>();
+
+            foreach(KeyValuePair<string,object> pair in dict){
+                
+                if(pair.Value.GetType() == typeof(byte[,])){
+                    storeImage(filepath + fileNameHeader + "_" + pair.Key, (byte[,])pair.Value);
+                }
+                else
+                {
+                    otherDict.Add(pair.Key, pair.Value);
+                }
+            }
+
+            if(otherDict.Count > 0){
+                storeDictionary(filepath + fileNameHeader + "_analysis.txt", otherDict);
+            }
+            
+        }
+
+        #endregion
+
+        #region Manipulating filename/file path
         private string getDataID(string element, int batchNumber)
         {
             DateTime dt = DateTime.Now;
@@ -260,7 +289,7 @@ namespace MOTMaster
             string year = EIDTime.ToString("yyyy");
             return basePath + "\\" + year + "\\" + month + "\\" + day + "\\";
         }
+        #endregion
 
-        
     }
 }

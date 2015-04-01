@@ -7,6 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+using Emgu.CV;
+using Emgu.CV.UI;
+using Emgu.Util;
+using Emgu.CV.Structure;
+
 namespace NavAnalysis
 {
     public partial class AnalWindow : Form
@@ -18,11 +23,21 @@ namespace NavAnalysis
             InitializeComponent();
         }
 
-        public void ShowImages(Bitmap one, Bitmap two, Bitmap three)
+        public void ShowImages(Image<Gray, Byte> one, Image<Gray, Byte> two, Image<Gray, Byte> three)
         {
             pictureBox1.Image = one;
             pictureBox2.Image = two;
             pictureBox3.Image = three;
+        }
+
+        public void ShowOne(Image<Gray, Byte> one)
+        {
+            pictureBox1.Image = one;
+        }
+
+        public void ShowTwo(Image<Gray, Byte> two)
+        {
+            pictureBox2.Image = two;
         }
 
     }

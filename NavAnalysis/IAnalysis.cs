@@ -8,5 +8,7 @@ namespace NavAnalysis
     public interface IAnalysis
     {
         void ComputeAbsImageFromZip(string zipFile, string img0, string img1);
+
+        Dictionary<string, object> GetReport(Byte[][,] imageData);
     }
 }

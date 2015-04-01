@@ -30,11 +30,11 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new Emgu.CV.UI.ImageBox() ;
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new Emgu.CV.UI.ImageBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new Emgu.CV.UI.ImageBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -138,11 +138,11 @@
 
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private Emgu.CV.UI.ImageBox pictureBox1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.PictureBox pictureBox2;
+        private Emgu.CV.UI.ImageBox pictureBox2;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.PictureBox pictureBox3;
+        private Emgu.CV.UI.ImageBox pictureBox3;
     }
 }
 

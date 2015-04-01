@@ -309,10 +309,16 @@ namespace MOTMaster
                         {
                             return returnString + "Couldn't save, data didn't arrive";
                         }
+
+                        Dictionary<string, object> analysisReport = new Dictionary<string,object>();
+
+                        if (runAnalysis)
+                        {
+                            analysisReport = analyzer.GetReport(imageData);
+                        }
+
                         Dictionary<String, Object> report = GetExperimentReport();
-                        save(script, scriptPath, imageData, report, EID);
-
-
+                        save(script, scriptPath, imageData, report, EID, analysisReport);
                     }
 
                     if (needsCamera) { finishCameraControl(); }
@@ -328,13 +334,6 @@ namespace MOTMaster
                 MessageBox.Show("Unable to load pattern. \n Check that the script file exists and that it compiled successfully");
             }
 
-            if (runAnalysis)
-            {
-                string zipFilePath = ioHelper.EID2Path(motMasterDataPath, EID) + EID + ".zip";
-                //MessageBox.Show("Calculating the Absorption Image");
-                analyzer.ComputeAbsImageFromZip(zipFilePath, EID + "_0.png", EID + "_1.png");
-            }
-
             return returnString + "\n Run Completed";
         }
         
@@ -343,15 +342,15 @@ namespace MOTMaster
         #region private stuff
 
 
-        private void save(MOTMasterScript script, string pathToPattern, byte[,] imageData, Dictionary<String, Object> report, string EID)
+        private void save(MOTMasterScript script, string pathToPattern, byte[,] imageData, Dictionary<String, Object> report, string EID, Dictionary<String, Object> analysisReport)
         {
             ioHelper.StoreRun(motMasterDataPath, controllerWindow.GetSaveBatchNumber(), pathToPattern, hardwareClassPath,  
-                script.Parameters, report, cameraAttributesPath, imageData, EID);
+                script.Parameters, report, cameraAttributesPath, imageData, EID, analysisReport);
         }
-        private void save(MOTMasterScript script, string pathToPattern, byte[][,] imageData, Dictionary<String, Object> report, string EID)
+        private void save(MOTMasterScript script, string pathToPattern, byte[][,] imageData, Dictionary<String, Object> report, string EID, Dictionary<String, Object> analysisReport)
         {
             ioHelper.StoreRun(motMasterDataPath, controllerWindow.GetSaveBatchNumber(), pathToPattern, hardwareClassPath,
-                script.Parameters, report, cameraAttributesPath, imageData, EID);
+                script.Parameters, report, cameraAttributesPath, imageData, EID, analysisReport);
         }
         private void runPattern(MOTMasterSequence sequence)
         {

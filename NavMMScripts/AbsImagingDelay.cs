@@ -17,13 +17,13 @@ public class Patterns : MOTMasterScript
     {
         Parameters = new Dictionary<string, object>();
         //Required Stuff
-        Parameters["PatternLength"] = 25000;
+        Parameters["PatternLength"] = 35000;
         Parameters["NeedsCamera"] = true;
         Parameters["NumberOfFrames"] = 2;
         Parameters["AbsAnalysis"] = true;
         //Pattern Stuff
         Parameters["motDetuning"] = 102.0;
-        Parameters["imagingDetuning"] = 107.0;
+        Parameters["imagingDetuning"] = 108.0;
         Parameters["imageDelay"] = -500;
         //Delays for Opening and Closing Shutters
         Parameters["openDelay"] = 26;
@@ -38,7 +38,7 @@ public class Patterns : MOTMasterScript
         pattern.Pulse(0, 0, 1, "AnalogPatternTrigger");
 
         pattern.Pulse(10000 + (int)Parameters["imageDelay"], 0, 100, "testDigitalChannel");
-        pattern.Pulse(20000, 0, 100, "testDigitalChannel");
+        pattern.Pulse(30000, 0, 100, "testDigitalChannel");
 
 
         return pattern;
