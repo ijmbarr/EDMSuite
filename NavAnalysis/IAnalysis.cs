@@ -9,6 +9,6 @@ namespace NavAnalysis
     {
         void ComputeAbsImageFromZip(string zipFile, string img0, string img1);
 
-        Dictionary<string, object> GetReport(Byte[][,] imageData);
+        Dictionary<string, object> GetReport(ushort[][,] imageData);
     }
 }

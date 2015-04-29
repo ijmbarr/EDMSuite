@@ -16,7 +16,7 @@ public class Patterns : MOTMasterScript
     public Patterns()
     {
         Parameters = new Dictionary<string, object>();
-        Parameters["PatternLength"] = 1000;
+        Parameters["PatternLength"] = 50000;
 
 
     }
@@ -37,12 +37,10 @@ public class Patterns : MOTMasterScript
     {
         AnalogPatternBuilder pattern = new AnalogPatternBuilder((int)Parameters["PatternLength"]);
 
-        pattern.AddChannel("testAnalogChannel");
-
-        pattern.AddLinearRamp("testAnalogChannel", 0, 100, 5);
-        pattern.AddLinearRamp("testAnalogChannel", 100, 100, 0);
-        pattern.AddLinearRamp("testAnalogChannel", 200, 100, 5);
-        pattern.AddLinearRamp("testAnalogChannel", 300, 100, 0);
+        pattern.AddChannel("motCoil");
+        pattern.AddAnalogValue("motCoil", 0, 4.0);
+        pattern.AddLinearRamp("motCoil", 1, 40000, 7);
+      
 
         pattern.SwitchAllOffAtEndOfPattern();
         return pattern;

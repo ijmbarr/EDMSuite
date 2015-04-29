@@ -248,11 +248,18 @@ namespace MOTMaster
             return DateTime.Now.ToString("yyyyMMdd_HHmmss");
         }
 
-        public string Run(Dictionary<String, Object> dict)
+        public Dictionary<string,object> Run(Dictionary<String, Object> dict)
         {
             string EID = getEID();
-            Stopwatch watch = new Stopwatch();
+            
             MOTMasterScript script = prepareScript(scriptPath, dict);
+
+            //Return Object
+            Dictionary<String, Object> returnObject = new Dictionary<string, object>();
+            returnObject.Add("returnMessage", "Trying to run " + EID + "\n");
+            returnObject.Add("EID", EID);
+            returnObject.Add("Path", ioHelper.EID2Path(motMasterDataPath,EID));
+            returnObject.Add("Success", false);
 
             //Keeps the hardwared used by MM changable using parameter settings in the script
             bool needsCamera = script.Parameters.Keys.Contains("NeedsCamera") && (bool)script.Parameters["NeedsCamera"];
@@ -260,12 +267,11 @@ namespace MOTMaster
             bool runAnalysis = script.Parameters.Keys.Contains("AbsAnalysis") && (bool)script.Parameters["AbsAnalysis"];
 
 
-            string returnString = "Trying to run " + EID + "\n";
-
             if (needsCamera && !camera.doesCameraExist())
             {
-                 MessageBox.Show("Camera needs to be loaded");
-                 return returnString + "Couldn't run, camera not loaded";
+                MessageBox.Show("Camera needs to be loaded");
+                returnObject["returnMessage"] += "Couldn't run, camera not loaded";
+                return returnObject;
             }
 
             if (script != null)
@@ -285,11 +291,7 @@ namespace MOTMaster
 
                     if (needsCamera) { waitUntilCameraIsReadyForAcquisition(); }
 
-                    watch.Start();
                     runPattern(sequence);
-                    watch.Stop();
-
-                    long timeTaken = watch.ElapsedMilliseconds;
                     
                     if (saveEnable)
                     {
@@ -302,23 +304,27 @@ namespace MOTMaster
                             }
                             else
                             {
-                                imageData = new byte[1][,];
+                                imageData = new ushort[1][,];
                             }
                         }
                         catch (DataNotArrivedFromHardwareControllerException)
                         {
-                            return returnString + "Couldn't save, data didn't arrive";
+                            returnObject["returnMessage"] += "Couldn't save, data didn't arrive";
+                            return returnObject;
                         }
 
                         Dictionary<string, object> analysisReport = new Dictionary<string,object>();
 
                         if (runAnalysis)
                         {
-                            analysisReport = analyzer.GetReport(imageData);
+                            //This seems to take around 7 seconds
+                            //analysisReport = analyzer.GetReport(imageData);
                         }
 
                         Dictionary<String, Object> report = GetExperimentReport();
+
                         save(script, scriptPath, imageData, report, EID, analysisReport);
+
                     }
 
                     if (needsCamera) { finishCameraControl(); }
@@ -334,24 +340,22 @@ namespace MOTMaster
                 MessageBox.Show("Unable to load pattern. \n Check that the script file exists and that it compiled successfully");
             }
 
-            return returnString + "\n Run Completed";
+
+            returnObject["returnMessage"] += "Run Completed";
+            returnObject["Success"] = true;
+            return returnObject;
         }
         
         #endregion
 
         #region private stuff
 
-
-        private void save(MOTMasterScript script, string pathToPattern, byte[,] imageData, Dictionary<String, Object> report, string EID, Dictionary<String, Object> analysisReport)
-        {
-            ioHelper.StoreRun(motMasterDataPath, controllerWindow.GetSaveBatchNumber(), pathToPattern, hardwareClassPath,  
-                script.Parameters, report, cameraAttributesPath, imageData, EID, analysisReport);
-        }
-        private void save(MOTMasterScript script, string pathToPattern, byte[][,] imageData, Dictionary<String, Object> report, string EID, Dictionary<String, Object> analysisReport)
+        private void save(MOTMasterScript script, string pathToPattern, ushort[][,] imageData, Dictionary<String, Object> report, string EID, Dictionary<String, Object> analysisReport)
         {
             ioHelper.StoreRun(motMasterDataPath, controllerWindow.GetSaveBatchNumber(), pathToPattern, hardwareClassPath,
                 script.Parameters, report, cameraAttributesPath, imageData, EID, analysisReport);
         }
+
         private void runPattern(MOTMasterSequence sequence)
         {
             initializeHardware(sequence);
@@ -459,7 +463,7 @@ namespace MOTMaster
         /// - Camera control is run through the hardware controller. All MOTMaster knows 
         /// about it a function called "GrabImage(string cameraSettings)". If the camera attributes are 
         /// set so that it needs a trigger, MOTMaster will have to deliver that too.
-        /// It'll expect a byte[,] or byte[][,] (if there are several images) as a return value.
+        /// It'll expect a ushort[,] or ushort[][,] (if there are several images) as a return value.
         /// 
         /// -At the moment MOTMaster won't run without a camera nor with 
         /// more than one. In the long term, we might 
@@ -483,7 +487,7 @@ namespace MOTMaster
             imageData = (byte[,])camera.GrabSingleImage(cameraAttributesPath);
             imagesRecieved = true;
         }*/
-        private byte[][,] imageData;
+        private ushort[][,] imageData;
         private void grabImage()
         {
             imagesRecieved = false;
@@ -603,11 +607,16 @@ namespace MOTMaster
 
         #region Remotable Stuff from python
 
-        public string RemoteRun(string scriptName, Dictionary<String, Object> parameters, bool save)
+        public Dictionary<string, object> RemoteRun(string scriptName, Dictionary<String, Object> parameters, bool save)
         {
             scriptPath = scriptName;
             saveEnable = save;
             return Run(parameters);
+        }
+
+        public void CloseIt()
+        {
+            controllerWindow.Close();
         }
 
         #endregion

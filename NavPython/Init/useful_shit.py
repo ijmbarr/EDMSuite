@@ -22,9 +22,9 @@ settings_path = "C:\\Data\\Settings\\NavigatorHardwareController\\"
 # it takes more than a few lines put it in it's own file.
 #
 # ToDo:
-# run scripts (options?)
 # run a script multiple times, varying a parameter
 #
+
 def testRemote(dic):
 	'''Tests remote stuff. Send it a dictionary and the console
 	should print it out in nav hardwave control'''
@@ -56,12 +56,40 @@ def LoadParameters(file):
 	if returnString != "":
 		print returnString
 		
-def RunScript(scriptName, parameters={}, save=False):
+def RunScript(scriptName, p={}, save=True, analyse = False):
 	paramDict = Dictionary[String, Object]()
-	for k,v in parameters.items():
+	for k,v in p.items():
 		paramDict.Add(k, v)
-	returnString = mm.RemoteRun(script_path + scriptName, paramDict, save)
-	print returnString
+	returnDic = dict(mm.RemoteRun(script_path + scriptName, paramDict, save))
+	
+	print returnDic["returnMessage"]
+	
+	if(analyse):
+		AnalyseAbsImage(returnDic["Path"], returnDic["EID"])
+	
+	return returnDic
+	
+def AnalyseAbsImage(path, EID):
+	anal.ComputeAbsImage(path + EID + ".zip", EID)
+	
+def close():
+	try:
+		hc.CloseIt()
+	except:
+		pass
+		
+	try:
+		mm.CloseIt()
+	except:
+		pass
+		
+	try:	
+		anal.CloseIt()
+	except:
+		pass
+		
+	exit()
+	
 
 f0 = "C:\\Data\\Nav\\data\\2015\\03\\27\\20150327_172746\\"
 fz = "C:\\Data\\Nav\\data\\2015\\03\\27\\20150327_172746.zip"
@@ -86,4 +114,14 @@ def aomSweep(startFreq,endFreq):
 		else:
 			freqVal = startFreq
 			sleep(0.2)
+def coilSweep(startCurrent,endCurrent,step=0.1,wait=0.2):
+	coilVal = startCurrent
+	while(1):
+		if (coilVal>endCurrent):
+			SetChannel("motCoil",coilVal)
+			coilVal-=step
+			sleep(wait)
+		else:
+			coilVal = startCurrent
+			sleep(wait)
 	

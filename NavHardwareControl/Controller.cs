@@ -125,10 +125,11 @@ namespace NavHardwareControl
             //e.g.  bBoxAnalogOutputTask = CreateAnalogOutputTask("b");
             //      steppingBBiasAnalogOutputTask = CreateAnalogOutputTask("steppingBBias");
 
-            CreateAnalogOutputTask("testAnalogChannel");
+            CreateAnalogOutputTask("motCoil");
             CreateAnalogOutputTask("aom1freq");
             CreateAnalogOutputTask("motShutter");
             CreateAnalogOutputTask("imagingShutter");
+            CreateAnalogOutputTask("rfSwitch");
          
             //CreateAnalogInputTask("testInput", -10, 10);
 
@@ -177,6 +178,7 @@ namespace NavHardwareControl
             // things like saving parameters, turning things off before quitting the program should go here
             
             StoreParameters(profilesPath + "StoppedParameters.json");
+
         }
         #endregion
 
@@ -750,21 +752,27 @@ namespace NavHardwareControl
             }
             catch { }
         }
+
+        public ushort[,] TempCameraSnapshot()
+        {
+            return ImageController.SingleSnapshot(cameraAttributesPath);
+        }
        
         #endregion
 
         #region Remote Camera Control
         //Written for taking images triggered by TTL. This "Arm" sets the camera so it's expecting a TTL.
 
-        public byte[,] GrabSingleImage(string cameraAttributesPath)
+        public ushort[,] GrabSingleImage(string cameraAttributesPath)
         {
             return ImageController.SingleSnapshot(cameraAttributesPath);
         }
-        public byte[][,] GrabMultipleImages(string cameraAttributesPath, int numberOfShots)
+
+        public ushort[][,] GrabMultipleImages(string cameraAttributesPath, int numberOfShots)
         {
             try
             {
-                byte[][,] images = ImageController.MultipleSnapshot(cameraAttributesPath, numberOfShots);
+                ushort[][,] images = ImageController.MultipleSnapshot(cameraAttributesPath, numberOfShots);
                 return images;
             }
 
@@ -897,6 +905,11 @@ namespace NavHardwareControl
             controlWindow.WriteToConsole("Loaded parameters from " + file);
             return "";
             
+        }
+
+        public void CloseIt()
+        {
+            controlWindow.Close();
         }
 
         #endregion

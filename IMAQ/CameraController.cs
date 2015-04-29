@@ -97,16 +97,17 @@ namespace IMAQ
             imageWindow.WriteToConsole("Streaming stopped");
         }
 
-        public byte[,] SingleSnapshot(string attributesPath)
+        public ushort[,] SingleSnapshot(string attributesPath)
         {
             return SingleSnapshot(attributesPath, false);
         }
 
-        public byte[,] SingleSnapshot(string attributesPath, bool addToImageList)
+        public ushort[,] SingleSnapshot(string attributesPath, bool addToImageList)
         {
             imageWindow.WriteToConsole("Taking snapshot");
             imageWindow.WriteToConsole("Applied camera attributes from " + attributesPath);
             SetCameraAttributes(attributesPath);
+
             try
             {
 
@@ -125,9 +126,12 @@ namespace IMAQ
                         {
                             imageList.Add(image);
                         }
+
                         PixelValue2D pval = image.ImageToArray();
+
                         state = CameraState.FREE;
-                        return pval.U8;
+
+                        return pval.U16;
                     }
                     catch (ObjectDisposedException e)
                     {
@@ -138,6 +142,11 @@ namespace IMAQ
                     {
                         MessageBox.Show(e.Message);
                         throw new ImaqdxException();
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                        throw e;
                     }
                 }
                 else return null;
@@ -151,7 +160,7 @@ namespace IMAQ
 
       
         
-        public byte[][,] MultipleSnapshot(string attributesPath, int numberOfShots)
+        public ushort[][,] MultipleSnapshot(string attributesPath, int numberOfShots)
         {
             SetCameraAttributes(attributesPath);
             VisionImage[] images = new VisionImage[numberOfShots];
@@ -172,10 +181,11 @@ namespace IMAQ
                 imageWindow.WriteToConsole(interval.ToString());        
                 }
 
-                List<byte[,]> byteList = new List<byte[,]>();
+                List<ushort[,]> imageList = new List<ushort[,]>();
+
                 foreach (VisionImage i in images)
                 {
-                    byteList.Add((i.ImageToArray()).U8);
+                    imageList.Add((i.ImageToArray()).U16);
 
                     if (windowShowing)
                     {
@@ -186,7 +196,7 @@ namespace IMAQ
 
                 state = CameraState.FREE;
 
-                return byteList.ToArray();
+                return imageList.ToArray();
             }
             catch (ImaqdxException e)
             {
@@ -342,11 +352,13 @@ namespace IMAQ
         public void SaveImageWithDialog()
         {
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.Filter = "shc images|*.png";
+            saveFileDialog1.Filter = "hc images|*.png";
             saveFileDialog1.Title = "Save Image";
-            String dataPath = (string)Environs.FileSystem.Paths["dataPath"];
-            String dataStoreDir = dataPath + "Single Images";
+            
+            String dataPath = (string)Environs.FileSystem.Paths["MOTMasterDataPath"];
+            String dataStoreDir = dataPath + "SingleImages";
             saveFileDialog1.InitialDirectory = dataStoreDir;
+
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 if (saveFileDialog1.FileName != "")
@@ -402,6 +414,7 @@ namespace IMAQ
         {
             image.WritePngFile(dataStoreFilePath);
             imageWindow.WriteToConsole("Image saved");
+
         }
 
         //public void storeImage(string savePath, byte[][,] imageData)
@@ -454,8 +467,8 @@ namespace IMAQ
 
 
 
-        
-        
+
+
 
         public void StoreImageList(string savePath)
         {

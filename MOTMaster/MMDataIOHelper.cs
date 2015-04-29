@@ -11,6 +11,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Forms;
 using System.Globalization;
 
+using System.Diagnostics;
+
 
 namespace MOTMaster
 {
@@ -30,7 +32,7 @@ namespace MOTMaster
 
         public void StoreRun(string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[,] imageData, string EID,
+            string cameraAttributesPath, ushort[][,] imageData, string EID,
             Dictionary<String, Object> analysisReport)
         {
             string fileTag = EID;
@@ -42,25 +44,10 @@ namespace MOTMaster
 
             //deleteFiles(saveFolder, fileTag);
             deleteFiles(files);
+
         }
 
-
-        public void StoreRun(string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
-            Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[][,] imageData, string EID,
-            Dictionary<String, Object> analysisReport)
-        {
-            string fileTag = EID;
-            string saveSubfolder = checkSaveFolder(saveFolder);
-
-            saveToFiles(fileTag, saveSubfolder, batchNumber, pathToPattern, pathToHardwareClass, dict, report, cameraAttributesPath, imageData, analysisReport);
-
-            string[] files = putCopiesOfFilesToZip(saveSubfolder, fileTag);
-
-            //deleteFiles(saveFolder, fileTag);
-            deleteFiles(files);
-        }
-
+        #region zipping files
         private void deleteFiles(string[] files)
         {
             foreach (string s in files)
@@ -68,6 +55,7 @@ namespace MOTMaster
                 File.Delete(s);
             }
         }
+
         private string[] putCopiesOfFilesToZip(string saveFolder, string fileTag)
         {
 
@@ -85,22 +73,12 @@ namespace MOTMaster
             fs.Close();
             return files;
         }
-        private void saveToFiles(string fileTag, string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
-            Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[,] imageData, Dictionary<String, Object> analysisReport)
-        {
-            storeDictionary(saveFolder + fileTag + "_parameters.txt", dict);
-            File.Copy(pathToPattern, saveFolder + fileTag + "_script.cs");
-            File.Copy(pathToHardwareClass, saveFolder + fileTag + "_hardwareClass.cs");
-            storeCameraAttributes(saveFolder + fileTag + "_cameraParameters.txt", cameraAttributesPath);
-            storeImage(saveFolder + fileTag, imageData);
-            storeDictionary(saveFolder + fileTag + "_hardwareReport.txt", report);
-            storeAnalysis(saveFolder, fileTag, analysisReport);
-        }
+
+        #endregion
 
         private void saveToFiles(string fileTag, string saveFolder, int batchNumber, string pathToPattern, string pathToHardwareClass,
             Dictionary<String, Object> dict, Dictionary<String, Object> report,
-            string cameraAttributesPath, byte[][,] imageData, Dictionary<String, Object> analysisReport)
+            string cameraAttributesPath, ushort[][,] imageData, Dictionary<String, Object> analysisReport)
         {
             storeDictionary(saveFolder + fileTag + "_parameters.txt", dict);
             File.Copy(pathToPattern, saveFolder + fileTag + "_script.cs");
@@ -152,7 +130,7 @@ namespace MOTMaster
             File.Copy(attributesPath, savePath);
         }
 
-        private void storeImage(string savePath, byte[][,] imageData)
+        private void storeImage(string savePath, ushort[][,] imageData)
         {
             for (int i = 0; i < imageData.Length; i++)
             {
@@ -160,7 +138,7 @@ namespace MOTMaster
             }
         }
 
-        private void storeImage(string savePath, byte[,] imageData)
+        private void storeImage(string savePath, ushort[,] imageData)
         {
             if (imageData == null) //Kill it if no images
             {
@@ -169,35 +147,18 @@ namespace MOTMaster
 
             int width = imageData.GetLength(1);
             int height = imageData.GetLength(0);
-            byte[] pixels = new byte[width * height];
-            for (int j = 0; j < height; j++)
+
+            ushort[] pixels = imageData.Cast<ushort>().ToArray();
+ 
+            var bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Gray16, null);
+            bitmap.WritePixels(new System.Windows.Int32Rect(0, 0, width, height), pixels, 2*width, 0);
+
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using (var stream = System.IO.File.Create(savePath + ".png"))
             {
-                for (int i = 0; i < width; i++)
-                {
-                    pixels[(width * j) + i] = imageData[j, i];
-                }
+                encoder.Save(stream);
             }
-            // Define the image palette
-            BitmapPalette myPalette = BitmapPalettes.Gray256Transparent;
-
-            // Creates a new empty image with the pre-defined palette
-
-            BitmapSource image = BitmapSource.Create(
-                width,
-                height,
-                96,
-                96,
-                PixelFormats.Indexed8,
-                myPalette,
-                pixels,
-                width);
-
-            FileStream stream = new FileStream(savePath + ".png", FileMode.Create);
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Interlace = PngInterlaceOption.On;
-            encoder.Frames.Add(BitmapFrame.Create(image));
-            encoder.Save(stream);
-            stream.Dispose();
 
         }
 
@@ -223,8 +184,8 @@ namespace MOTMaster
 
             foreach(KeyValuePair<string,object> pair in dict){
                 
-                if(pair.Value.GetType() == typeof(byte[,])){
-                    storeImage(filepath + fileNameHeader + "_" + pair.Key, (byte[,])pair.Value);
+                if(pair.Value.GetType() == typeof(ushort[,])){
+                    storeImage(filepath + fileNameHeader + "_" + pair.Key, (ushort[,])pair.Value);
                 }
                 else
                 {

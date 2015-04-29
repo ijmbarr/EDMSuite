@@ -37,10 +37,11 @@ namespace NavHardwareControl
         public ControlWindow()
         {
             InitializeComponent();
-            AOTextBoxes["testAnalogChannel"] = testAnalogLine;
+            AOTextBoxes["motCoil"] = motCoilCurrent;
             AOTextBoxes["aom1freq"] = AOM1;
             AOTextBoxes["motShutter"] = motShutterTextBox;
             AOTextBoxes["imagingShutter"] = imageShutterTextBox;
+            AOTextBoxes["rfSwitch"] = rfSwitch;
             DOCheckBoxes["testDigitalChannel"] = testChannel;
 
         }
@@ -79,13 +80,15 @@ namespace NavHardwareControl
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.testChannel = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.imageShutterTextBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.motShutterTextBox = new System.Windows.Forms.TextBox();
             this.coil0GroupBox = new System.Windows.Forms.GroupBox();
             this.AOM1 = new System.Windows.Forms.TextBox();
             this.coil0Label0 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.testAnalogLine = new System.Windows.Forms.TextBox();
+            this.motCoilCurrent = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -103,8 +106,8 @@ namespace NavHardwareControl
             this.label1 = new System.Windows.Forms.Label();
             this.updateHardwareButton = new System.Windows.Forms.Button();
             this.consoleRichTextBox = new System.Windows.Forms.RichTextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.imageShutterTextBox = new System.Windows.Forms.TextBox();
+            this.rfSwitch = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.shcTabs.SuspendLayout();
             this.tabCamera.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -191,13 +194,15 @@ namespace NavHardwareControl
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.rfSwitch);
+            this.tabPage2.Controls.Add(this.label5);
             this.tabPage2.Controls.Add(this.imageShutterTextBox);
             this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Controls.Add(this.label3);
             this.tabPage2.Controls.Add(this.motShutterTextBox);
             this.tabPage2.Controls.Add(this.coil0GroupBox);
             this.tabPage2.Controls.Add(this.label2);
-            this.tabPage2.Controls.Add(this.testAnalogLine);
+            this.tabPage2.Controls.Add(this.motCoilCurrent);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -206,10 +211,26 @@ namespace NavHardwareControl
             this.tabPage2.Text = "Analog Lines";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // imageShutterTextBox
+            // 
+            this.imageShutterTextBox.Location = new System.Drawing.Point(107, 91);
+            this.imageShutterTextBox.Name = "imageShutterTextBox";
+            this.imageShutterTextBox.Size = new System.Drawing.Size(100, 20);
+            this.imageShutterTextBox.TabIndex = 18;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(20, 94);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(81, 13);
+            this.label4.TabIndex = 17;
+            this.label4.Text = "Imaging Shutter";
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(28, 55);
+            this.label3.Location = new System.Drawing.Point(39, 55);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 13);
             this.label3.TabIndex = 16;
@@ -217,7 +238,7 @@ namespace NavHardwareControl
             // 
             // motShutterTextBox
             // 
-            this.motShutterTextBox.Location = new System.Drawing.Point(99, 52);
+            this.motShutterTextBox.Location = new System.Drawing.Point(107, 52);
             this.motShutterTextBox.Name = "motShutterTextBox";
             this.motShutterTextBox.Size = new System.Drawing.Size(100, 20);
             this.motShutterTextBox.TabIndex = 15;
@@ -254,18 +275,18 @@ namespace NavHardwareControl
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 18);
+            this.label2.Location = new System.Drawing.Point(3, 18);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(87, 13);
+            this.label2.Size = new System.Drawing.Size(98, 13);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Test Analog Line";
+            this.label2.Text = "Mot Coil Current (A)";
             // 
-            // testAnalogLine
+            // motCoilCurrent
             // 
-            this.testAnalogLine.Location = new System.Drawing.Point(99, 15);
-            this.testAnalogLine.Name = "testAnalogLine";
-            this.testAnalogLine.Size = new System.Drawing.Size(100, 20);
-            this.testAnalogLine.TabIndex = 0;
+            this.motCoilCurrent.Location = new System.Drawing.Point(107, 15);
+            this.motCoilCurrent.Name = "motCoilCurrent";
+            this.motCoilCurrent.Size = new System.Drawing.Size(100, 20);
+            this.motCoilCurrent.TabIndex = 0;
             // 
             // button1
             // 
@@ -403,21 +424,21 @@ namespace NavHardwareControl
             this.consoleRichTextBox.TabIndex = 23;
             this.consoleRichTextBox.Text = "";
             // 
-            // label4
+            // rfSwitch
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 98);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(81, 13);
-            this.label4.TabIndex = 17;
-            this.label4.Text = "Imaging Shutter";
+            this.rfSwitch.Location = new System.Drawing.Point(107, 130);
+            this.rfSwitch.Name = "rfSwitch";
+            this.rfSwitch.Size = new System.Drawing.Size(100, 20);
+            this.rfSwitch.TabIndex = 20;
             // 
-            // imageShutterTextBox
+            // label5
             // 
-            this.imageShutterTextBox.Location = new System.Drawing.Point(99, 91);
-            this.imageShutterTextBox.Name = "imageShutterTextBox";
-            this.imageShutterTextBox.Size = new System.Drawing.Size(100, 20);
-            this.imageShutterTextBox.TabIndex = 18;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(20, 133);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(48, 13);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "rf Switch";
             // 
             // ControlWindow
             // 
@@ -523,7 +544,7 @@ namespace NavHardwareControl
         private CheckBox testChannel;
         private TabPage tabPage2;
         private Label label2;
-        private TextBox testAnalogLine;
+        private TextBox motCoilCurrent;
 
         private GroupBox coil0GroupBox;
         public TextBox AOM1;
@@ -645,6 +666,8 @@ namespace NavHardwareControl
         private TextBox motShutterTextBox;
         private TextBox imageShutterTextBox;
         private Label label4;
+        private TextBox rfSwitch;
+        private Label label5;
 
 
        

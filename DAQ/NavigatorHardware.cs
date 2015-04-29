@@ -36,15 +36,19 @@ namespace DAQ.HAL
             //Timing and trigger
             Info.Add("AOClockSource", analogBoard + "/PFI1");
             Info.Add("AOPatternTrigger", analogBoard + "/PFI0");
-            //Other stuff
-            AddAnalogOutputChannel("testAnalogChannel", analogBoard + "/ao0");
+            //Setting up the channels
             
-
+            AddAnalogOutputChannel("motCoil", analogBoard + "/ao0");
+            //Old current driver calibration, may need it again...
+            //AddCalibration("motCoil",new LinearCalibration((1/(2*1.46591)),0.001,0,0.0,7.0));
+            AddCalibration("motCoil", new LinearCalibration((1 / 1.98588), -0.0022, 0, 0.0, 8.0));
             AddAnalogOutputChannel("aom1freq", analogBoard + "/ao1");
             AddCalibration("aom1freq", new LinearCalibration((1/8.876),40.343,0,0,130));
 
             AddAnalogOutputChannel("motShutter", analogBoard + "/ao2");
             AddAnalogOutputChannel("imagingShutter", analogBoard + "/ao3");
+            AddAnalogOutputChannel("rfSwitch", analogBoard + "/ao4");
+
             //add the camera
             Instruments.Add("motCam", "/cam0");
 
