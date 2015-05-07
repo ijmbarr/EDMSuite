@@ -70,11 +70,13 @@ namespace MOTMaster
 
         DAQMxPatternGenerator digitalPatternGenerator;
         DAQMxAnalogPatternGenerator analogPatternGenerator;
+        HSDIOPatternGenerator HSdigitalPatternGenerator;
 
         CameraControllable camera;
         TranslationStageControllable tstage;
         ExperimentReportable experimentReporter;
         IAnalysis analyzer;
+        IHardwareRelease releaser;
 
         MMDataIOHelper ioHelper;
 
@@ -97,6 +99,7 @@ namespace MOTMaster
             controllerWindow.controller = this;
 
             digitalPatternGenerator = new DAQMxPatternGenerator((string)Environs.Hardware.GetInfo("pgBoard"));
+            
             analogPatternGenerator = new DAQMxAnalogPatternGenerator();
 
             camera = (CameraControllable)Activator.GetObject(typeof(CameraControllable),
@@ -106,6 +109,9 @@ namespace MOTMaster
                 "tcp://localhost:1172/controller.rem");
 
             experimentReporter = (ExperimentReportable)Activator.GetObject(typeof(ExperimentReportable),
+                "tcp://localhost:1172/controller.rem");
+
+            releaser = (IHardwareRelease)Activator.GetObject(typeof(ExperimentReportable),
                 "tcp://localhost:1172/controller.rem");
 
             analyzer = (IAnalysis)Activator.GetObject(typeof(IAnalysis),
@@ -130,11 +136,13 @@ namespace MOTMaster
         {
             analogPatternGenerator.OutputPatternAndWait(sequence.AnalogPattern.Pattern);
             digitalPatternGenerator.OutputPattern(sequence.DigitalPattern.Pattern);
+            HSdigitalPatternGenerator.OutputPattern(sequence.HSDigitalPattern.Pattern);
         }
 
         private void initializeHardware(MOTMasterSequence sequence)
         {
             digitalPatternGenerator.Configure(pgClockFrequency, false, true, true, sequence.DigitalPattern.Pattern.Length, true, false);
+            HSdigitalPatternGenerator.Configure(pgClockFrequency, false, true, true, sequence.HSDigitalPattern.Pattern.Length, true, false);
             analogPatternGenerator.Configure(sequence.AnalogPattern, apgClockFrequency);
         }
 
@@ -142,6 +150,8 @@ namespace MOTMaster
         {
             sequence.DigitalPattern.Clear(); //No clearing required for analog (I think).
             digitalPatternGenerator.StopPattern();
+            sequence.HSDigitalPattern.Clear(); 
+            HSdigitalPatternGenerator.StopPattern();
             analogPatternGenerator.StopPattern();
         }
 
@@ -244,7 +254,7 @@ namespace MOTMaster
 
         public string getEID()
         {
-            //Folling tyche, we use the date and time as the EID in the format: year-month-day-hour-minute-second
+            //Following tyche, we use the date and time as the EID in the format: year-month-day-hour-minute-second
             return DateTime.Now.ToString("yyyyMMdd_HHmmss");
         }
 
@@ -253,6 +263,10 @@ namespace MOTMaster
             string EID = getEID();
             
             MOTMasterScript script = prepareScript(scriptPath, dict);
+
+            //Release HSDIO card from HC
+            releaser.ReleaseHardware();
+            HSdigitalPatternGenerator = new HSDIOPatternGenerator((string)Environs.Hardware.GetInfo("HSDIOBoard"));
 
             //Return Object
             Dictionary<String, Object> returnObject = new Dictionary<string, object>();
@@ -340,6 +354,8 @@ namespace MOTMaster
                 MessageBox.Show("Unable to load pattern. \n Check that the script file exists and that it compiled successfully");
             }
 
+            HSdigitalPatternGenerator.Dispose();
+            releaser.ReclaimHardware();
 
             returnObject["returnMessage"] += "Run Completed";
             returnObject["Success"] = true;
@@ -384,6 +400,7 @@ namespace MOTMaster
         private void buildPattern(MOTMasterSequence sequence, int patternLength)
         {
             sequence.DigitalPattern.BuildPattern(patternLength);
+            sequence.HSDigitalPattern.BuildPattern(patternLength);
             sequence.AnalogPattern.BuildPattern();
         }
        

@@ -10,6 +10,7 @@ namespace MOTMaster
     public abstract class MOTMasterScript
     {
         public abstract PatternBuilder32 GetDigitalPattern();
+        public abstract PatternBuilder32 GetHSDigitialPattern();
         public abstract AnalogPatternBuilder GetAnalogPattern();
         public Dictionary<String,Object> Parameters;
 
@@ -18,6 +19,7 @@ namespace MOTMaster
             MOTMasterSequence s = new MOTMasterSequence();
             s.DigitalPattern = GetDigitalPattern();
             s.AnalogPattern = GetAnalogPattern();
+            s.HSDigitalPattern = GetHSDigitialPattern();
             return s;
         }
 

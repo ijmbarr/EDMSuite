@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AbsImaging.cs" />
     <Compile Include="AbsImagingDelay.cs" />
+    <Compile Include="AomCalibrate.cs" />
     <Compile Include="shutterTest.cs" />
     <Compile Include="test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

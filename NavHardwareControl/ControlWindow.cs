@@ -32,6 +32,7 @@ namespace NavHardwareControl
         public Controller controller;
         private Dictionary<string, TextBox> AOTextBoxes = new Dictionary<string, TextBox>();
         private Dictionary<string, CheckBox> DOCheckBoxes = new Dictionary<string, CheckBox>();
+        private Dictionary<string, CheckBox> DOHSCheckBoxes = new Dictionary<string, CheckBox>();
             
 
         public ControlWindow()
@@ -42,7 +43,12 @@ namespace NavHardwareControl
             AOTextBoxes["motShutter"] = motShutterTextBox;
             AOTextBoxes["imagingShutter"] = imageShutterTextBox;
             AOTextBoxes["rfSwitch"] = rfSwitch;
+            AOTextBoxes["rfAtten"] = rfAttenBox;
+
             DOCheckBoxes["testDigitalChannel"] = testChannel;
+
+            DOHSCheckBoxes["do00"] = do00;
+            DOHSCheckBoxes["do01"] = do01;
 
         }
 
@@ -80,6 +86,10 @@ namespace NavHardwareControl
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.testChannel = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
+            this.rfAttenBox = new System.Windows.Forms.TextBox();
+            this.rfSwitch = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.imageShutterTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -106,8 +116,8 @@ namespace NavHardwareControl
             this.label1 = new System.Windows.Forms.Label();
             this.updateHardwareButton = new System.Windows.Forms.Button();
             this.consoleRichTextBox = new System.Windows.Forms.RichTextBox();
-            this.rfSwitch = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
+            this.do00 = new System.Windows.Forms.CheckBox();
+            this.do01 = new System.Windows.Forms.CheckBox();
             this.shcTabs.SuspendLayout();
             this.tabCamera.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -173,6 +183,8 @@ namespace NavHardwareControl
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.do01);
+            this.tabPage1.Controls.Add(this.do00);
             this.tabPage1.Controls.Add(this.testChannel);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -194,6 +206,8 @@ namespace NavHardwareControl
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label6);
+            this.tabPage2.Controls.Add(this.rfAttenBox);
             this.tabPage2.Controls.Add(this.rfSwitch);
             this.tabPage2.Controls.Add(this.label5);
             this.tabPage2.Controls.Add(this.imageShutterTextBox);
@@ -210,6 +224,38 @@ namespace NavHardwareControl
             this.tabPage2.TabIndex = 2;
             this.tabPage2.Text = "Analog Lines";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(20, 171);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(70, 13);
+            this.label6.TabIndex = 22;
+            this.label6.Text = "rf Attenuation";
+            // 
+            // rfAttenBox
+            // 
+            this.rfAttenBox.Location = new System.Drawing.Point(107, 168);
+            this.rfAttenBox.Name = "rfAttenBox";
+            this.rfAttenBox.Size = new System.Drawing.Size(100, 20);
+            this.rfAttenBox.TabIndex = 21;
+            // 
+            // rfSwitch
+            // 
+            this.rfSwitch.Location = new System.Drawing.Point(107, 130);
+            this.rfSwitch.Name = "rfSwitch";
+            this.rfSwitch.Size = new System.Drawing.Size(100, 20);
+            this.rfSwitch.TabIndex = 20;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(20, 133);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(48, 13);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "rf Switch";
             // 
             // imageShutterTextBox
             // 
@@ -424,21 +470,25 @@ namespace NavHardwareControl
             this.consoleRichTextBox.TabIndex = 23;
             this.consoleRichTextBox.Text = "";
             // 
-            // rfSwitch
+            // do00
             // 
-            this.rfSwitch.Location = new System.Drawing.Point(107, 130);
-            this.rfSwitch.Name = "rfSwitch";
-            this.rfSwitch.Size = new System.Drawing.Size(100, 20);
-            this.rfSwitch.TabIndex = 20;
+            this.do00.AutoSize = true;
+            this.do00.Location = new System.Drawing.Point(19, 52);
+            this.do00.Name = "do00";
+            this.do00.Size = new System.Drawing.Size(50, 17);
+            this.do00.TabIndex = 1;
+            this.do00.Text = "do00";
+            this.do00.UseVisualStyleBackColor = true;
             // 
-            // label5
+            // do01
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(20, 133);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(48, 13);
-            this.label5.TabIndex = 19;
-            this.label5.Text = "rf Switch";
+            this.do01.AutoSize = true;
+            this.do01.Location = new System.Drawing.Point(19, 85);
+            this.do01.Name = "do01";
+            this.do01.Size = new System.Drawing.Size(50, 17);
+            this.do01.TabIndex = 2;
+            this.do01.Text = "do01";
+            this.do01.UseVisualStyleBackColor = true;
             // 
             // ControlWindow
             // 
@@ -606,6 +656,15 @@ namespace NavHardwareControl
         {
             setCheckBox(DOCheckBoxes[channelName], value);
         }
+
+        public bool ReadHSDigital(string channelName)
+        {
+            return DOHSCheckBoxes[channelName].Checked;
+        }
+        public void SetHSDigital(string channelName, bool value)
+        {
+            setCheckBox(DOHSCheckBoxes[channelName], value);
+        }
         #endregion
 
         #region Camera Control
@@ -668,6 +727,12 @@ namespace NavHardwareControl
         private Label label4;
         private TextBox rfSwitch;
         private Label label5;
+        private Label label6;
+        private TextBox rfAttenBox;
+        private CheckBox do01;
+        private CheckBox do00;
+
+      
 
 
        

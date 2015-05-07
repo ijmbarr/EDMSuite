@@ -28,6 +28,13 @@ public class Patterns : MOTMasterScript
 
     }
 
+    public override PatternBuilder32 GetHSDigitialPattern()
+    {
+        PatternBuilder32 pattern = new PatternBuilder32();
+
+        return pattern;
+    }
+
     public override PatternBuilder32 GetDigitalPattern()
     {
         PatternBuilder32 pattern = new PatternBuilder32();

@@ -60,7 +60,7 @@ namespace NavHardwareControl
     /// like: "what was the source chamber pressure when we took this data?". At the moment, the hardware state is also included in the report.
     /// 
     /// </summary>
-    public class Controller : MarshalByRefObject, CameraControllable, ExperimentReportable
+    public class Controller : MarshalByRefObject, CameraControllable, ExperimentReportable, IHardwareRelease
     {
         #region Constants
         //Put any constants and stuff here
@@ -77,6 +77,7 @@ namespace NavHardwareControl
 
         // table of all digital analogTasks
         Hashtable digitalTasks = new Hashtable();
+        HSDIOStaticChannelController HSchannels;
 
         //Cameras
         public CameraController ImageController;
@@ -116,7 +117,12 @@ namespace NavHardwareControl
 
             //This is to keep track of the various things which the HC controls.
             analogTasks = new Dictionary<string, Task>();
+            var temp = Environs.Info["HSDIOBoard"];
+            HSchannels = new HSDIOStaticChannelController((string)Environs.Hardware.GetInfo("HSDIOBoard"), "0-31");
             stateRecord = new HardwareState();
+
+            CreateHSDigitalTask("do00");
+            CreateHSDigitalTask("do01");
 
             CreateDigitalTask("testDigitalChannel");
 
@@ -130,6 +136,7 @@ namespace NavHardwareControl
             CreateAnalogOutputTask("motShutter");
             CreateAnalogOutputTask("imagingShutter");
             CreateAnalogOutputTask("rfSwitch");
+            CreateAnalogOutputTask("rfAtten");
          
             //CreateAnalogInputTask("testInput", -10, 10);
 
@@ -347,6 +354,18 @@ namespace NavHardwareControl
             digitalTask.Control(TaskAction.Unreserve);
         }
 
+        private void CreateHSDigitalTask(String name)
+        {
+            DigitalOutputChannel channel = (DigitalOutputChannel)Environs.Hardware.DigitalOutputChannels[name];
+            stateRecord.HSdigitals[name] = false;
+            HSchannels.CreateHSDigitalTask(name, channel.BitNumber);
+        }
+
+        public void SetHSDigitalLine(string name, bool value)
+        {
+            HSchannels.SetHSDigitalLine(name, value);
+        }
+
         #endregion
 
         #region keeping track of the state of the hardware!
@@ -364,11 +383,13 @@ namespace NavHardwareControl
         {
             public Dictionary<string, double> analogs;
             public Dictionary<string, bool> digitals;
+            public Dictionary<string, bool> HSdigitals;
 
             public HardwareState()
             {
                 analogs = new Dictionary<string, double>();
                 digitals = new Dictionary<string, bool>();
+                HSdigitals = new Dictionary<string, bool>();
             }
         }
         
@@ -467,7 +488,7 @@ namespace NavHardwareControl
 
         private void applyToHardware(HardwareState state)
         {
-            if (state.analogs.Count != 0 || state.digitals.Count != 0)
+            if (state.analogs.Count != 0 || state.digitals.Count != 0 || state.HSdigitals.Count != 0)
             {
                 if (HCState == HCUIControlState.OFF)
                 {
@@ -477,6 +498,7 @@ namespace NavHardwareControl
 
                     applyAnalogs(state);
                     applyDigitals(state);
+                    applyHSDigitals(state);
 
                     HCState = HCUIControlState.OFF;
                     controlWindow.UpdateUIState(HCState);
@@ -493,6 +515,8 @@ namespace NavHardwareControl
             HardwareState state = new HardwareState();
             state.analogs = new Dictionary<string, double>();
             state.digitals = new Dictionary<string, bool>();
+            state.HSdigitals = new Dictionary<string, bool>();
+
             foreach(KeyValuePair<string, double> pairs in oldState.analogs)
             {
                 if (oldState.analogs[pairs.Key] != newState.analogs[pairs.Key])
@@ -500,6 +524,7 @@ namespace NavHardwareControl
                     state.analogs[pairs.Key] = newState.analogs[pairs.Key];
                 }
             }
+
             foreach (KeyValuePair<string, bool> pairs in oldState.digitals)
             {
                 if (oldState.digitals[pairs.Key] != newState.digitals[pairs.Key])
@@ -507,6 +532,15 @@ namespace NavHardwareControl
                     state.digitals[pairs.Key] = newState.digitals[pairs.Key];
                 }
             }
+
+            foreach (KeyValuePair<string, bool> pairs in oldState.HSdigitals)
+            {
+                if (oldState.HSdigitals[pairs.Key] != newState.HSdigitals[pairs.Key])
+                {
+                    state.HSdigitals[pairs.Key] = newState.HSdigitals[pairs.Key];
+                }
+            }
+
             return state;
         }
 
@@ -516,9 +550,15 @@ namespace NavHardwareControl
             {
                 stateRecord.analogs[pairs.Key] = changes.analogs[pairs.Key];
             }
+
             foreach (KeyValuePair<string, bool> pairs in changes.digitals)
             {
                 stateRecord.digitals[pairs.Key] = changes.digitals[pairs.Key];
+            }
+
+            foreach (KeyValuePair<string, bool> pairs in changes.HSdigitals)
+            {
+                stateRecord.HSdigitals[pairs.Key] = changes.HSdigitals[pairs.Key];
             }
         }
 
@@ -561,6 +601,15 @@ namespace NavHardwareControl
                 controlWindow.WriteToConsole("Set channel '" + pairs.Key.ToString() + "' to " + pairs.Value.ToString());
             }
         }
+
+        private void applyHSDigitals(HardwareState state)
+        {
+            foreach (KeyValuePair<string, bool> pairs in state.HSdigitals)
+            {
+                SetHSDigitalLine(pairs.Key, pairs.Value);
+                controlWindow.WriteToConsole("Set channel '" + pairs.Key.ToString() + "' to " + pairs.Value.ToString());
+            }
+        }
         #endregion 
 
         #region Reading and Writing to UI
@@ -570,6 +619,7 @@ namespace NavHardwareControl
             HardwareState state = new HardwareState();
             state.analogs = readUIAnalogs(stateRecord.analogs.Keys);
             state.digitals = readUIDigitals(stateRecord.digitals.Keys);
+            state.HSdigitals = readUIHSDigitals(stateRecord.HSdigitals.Keys);
             return state;
         }
         private Dictionary<string, double> readUIAnalogs(Dictionary<string, double>.KeyCollection keys)
@@ -583,6 +633,7 @@ namespace NavHardwareControl
             }
             return analogs;
         }
+
         private Dictionary<string, bool> readUIDigitals(Dictionary<string, bool>.KeyCollection keys)
         {
             Dictionary<string, bool> digitals = new Dictionary<string,bool>();
@@ -594,12 +645,25 @@ namespace NavHardwareControl
             }
             return digitals;
         }
+
+        private Dictionary<string, bool> readUIHSDigitals(Dictionary<string, bool>.KeyCollection keys)
+        {
+            Dictionary<string, bool> digitals = new Dictionary<string, bool>();
+            string[] keyArray = new string[keys.Count];
+            keys.CopyTo(keyArray, 0);
+            for (int i = 0; i < keys.Count; i++)
+            {
+                digitals[keyArray[i]] = controlWindow.ReadHSDigital(keyArray[i]);
+            }
+            return digitals;
+        }
        
 
         private void setValuesDisplayedOnUI(HardwareState state)
         {
             setUIAnalogs(state);
             setUIDigitals(state);
+            setUIHSDigitals(state);
         }
         private void setUIAnalogs(HardwareState state)
         {
@@ -615,11 +679,20 @@ namespace NavHardwareControl
                 }
             }
         }
+
         private void setUIDigitals(HardwareState state)
         {
             foreach (KeyValuePair<string, bool> pairs in state.digitals)
             {
                 controlWindow.SetDigital(pairs.Key, (bool)pairs.Value);
+            }
+        }
+
+        private void setUIHSDigitals(HardwareState state)
+        {
+            foreach (KeyValuePair<string, bool> pairs in state.HSdigitals)
+            {
+                controlWindow.SetHSDigital(pairs.Key, (bool)pairs.Value);
             }
         }
 
@@ -696,9 +769,19 @@ namespace NavHardwareControl
         public void SetValue(string channel, bool value)
         {
             HCState = HCUIControlState.LOCAL;
-            stateRecord.digitals[channel] = value;
-            SetDigitalLine(channel, value);
-            setValuesDisplayedOnUI(stateRecord);
+            if (stateRecord.digitals.ContainsKey(channel))
+            {
+                stateRecord.digitals[channel] = value;
+                SetDigitalLine(channel, value);
+                setValuesDisplayedOnUI(stateRecord);
+            }
+            else if (stateRecord.HSdigitals.ContainsKey(channel))
+            {
+                stateRecord.digitals[channel] = value;
+                SetHSDigitalLine(channel, value);
+                setValuesDisplayedOnUI(stateRecord);
+            }
+
             HCState = HCUIControlState.OFF;
 
         }
@@ -758,6 +841,20 @@ namespace NavHardwareControl
             return ImageController.SingleSnapshot(cameraAttributesPath);
         }
        
+        #endregion
+
+        #region Release/Reclaim Hardware
+
+        public void ReleaseHardware()
+        {
+            HSchannels.ReleaseHardware();
+        }
+
+        public void ReclaimHardware()
+        {
+            HSchannels.ReclaimHardware();
+        }
+
         #endregion
 
         #region Remote Camera Control

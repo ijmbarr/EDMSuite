@@ -16,9 +16,23 @@ public class Patterns : MOTMasterScript
     public Patterns()
     {
         Parameters = new Dictionary<string, object>();
-        Parameters["PatternLength"] = 50000;
+        Parameters["PatternLength"] = 1000;
 
 
+    }
+
+    public override PatternBuilder32 GetHSDigitialPattern()
+    {
+        //Will it work?
+        PatternBuilder32 pattern = new PatternBuilder32();
+
+        pattern.Pulse(0, 0, 50, "do00");
+        pattern.Pulse(200, 0, 100, "do00");
+        pattern.Pulse(400, 0, 50, "do00");
+
+        pattern.Pulse(200, 0, 100, "do01");
+
+        return pattern;
     }
 
     public override PatternBuilder32 GetDigitalPattern()
@@ -38,8 +52,8 @@ public class Patterns : MOTMasterScript
         AnalogPatternBuilder pattern = new AnalogPatternBuilder((int)Parameters["PatternLength"]);
 
         pattern.AddChannel("motCoil");
-        pattern.AddAnalogValue("motCoil", 0, 4.0);
-        pattern.AddLinearRamp("motCoil", 1, 40000, 7);
+        //pattern.AddAnalogValue("motCoil", 0, 4.0);
+        //pattern.AddLinearRamp("motCoil", 1, 40000, 7);
       
 
         pattern.SwitchAllOffAtEndOfPattern();

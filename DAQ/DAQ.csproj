@@ -188,7 +188,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Navigator|x86'">
     <OutputPath>bin\x86\Navigator\</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
-    
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
@@ -267,8 +266,11 @@
     </Compile>
     <Compile Include="HP5350BCounter.cs" />
     <Compile Include="HP8673BSynth.cs" />
+    <Compile Include="HSDIOPatternGenerator.cs" />
+    <Compile Include="IHardwareRelase.cs" />
     <Compile Include="NavCompFileSystem.cs" />
     <Compile Include="NavigatorHardware.cs" />
+    <Compile Include="niHSDIO.cs" />
     <Compile Include="SerialMotorControllerBCD.cs" />
     <Compile Include="SerialAgilent53131A.cs" />
     <Compile Include="Parker404XR.cs" />

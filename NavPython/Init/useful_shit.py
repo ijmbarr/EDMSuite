@@ -10,10 +10,12 @@ from System.Collections.Generic import Dictionary,List
 
 import os
 import glob
+import datetime
 from time import sleep
 
 script_path = "C:\\EDMSuite\\NavMMScripts\\"
 settings_path = "C:\\Data\\Settings\\NavigatorHardwareController\\"
+run_path = "C:\\Data\\Nav\\Analysis\\"
 
 
 #
@@ -91,14 +93,6 @@ def close():
 	exit()
 	
 
-f0 = "C:\\Data\\Nav\\data\\2015\\03\\27\\20150327_172746\\"
-fz = "C:\\Data\\Nav\\data\\2015\\03\\27\\20150327_172746.zip"
-f1 = "20150327_172746_0.png"
-f2 = "20150327_172746_1.png"
-
-t = lambda : anal.ComputeAbsImageFromFile(f0 + f1,f0 + f2)
-v = lambda : anal.ComputeAbsImageFromZip(fz, f1, f2)
-
 def findDelayTimes(openMax,closeMax,imDelay):
 	for openTime in range(0,openMax,5):
 		for closeTime in range(0,closeMax,5):
@@ -124,4 +118,22 @@ def coilSweep(startCurrent,endCurrent,step=0.1,wait=0.2):
 		else:
 			coilVal = startCurrent
 			sleep(wait)
+	
+def TempRun(startTime, endTime, noImages, p ={},save=True,analyse=False ):
+	t = datetime.datetime.today()
+	dir = run_path +t.strftime('%Y\\%m\\%d\\')
+	if not os.path.exists(dir):
+		os.makedirs(dir)
+	outfile = open(dir+'TempRun'+t.strftime('%H%M%S')+'.txt','w')
+	runlist=[]
+	for time in range(startTime*noImages,endTime*noImages,noImages):
+		p["imageDelay"]=time/noImages
+		run=RunScript("AbsImagingDelay.cs",p,save,analyse)
+		runlist.append(run["Path"]+run["EID"]+".zip")
+	for item in runlist:
+		outfile.write("%s\n" % item)
+	outfile.close()
+	
+	
+		
 	

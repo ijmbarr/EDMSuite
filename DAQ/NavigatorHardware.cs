@@ -18,6 +18,7 @@ namespace DAQ.HAL
             //Temporary stuff to deal with unknown EDMS bullshit
             string daq = (string)Boards["multiDAQ"];
             Info.Add("pgBoard", "/MultiDAQ");
+            Info.Add("HSDIOBoard", "DigitalIO"); //Note: no slash
             Info.Add("PGClockCounter", "/ctr0");
             Info.Add("PGType", "integrated");
             Info.Add("Element", "Rb");
@@ -27,9 +28,8 @@ namespace DAQ.HAL
             //map the digital channels
             string daqBoard = (string)Boards["digIO"];
             //General channels
-            AddDigitalOutputChannel("coolingSwitch", daqBoard, 0, 6);
-            AddDigitalOutputChannel("repumpSwitch", daqBoard, 0, 7);
-            AddDigitalOutputChannel("cameraTrigger", daqBoard, 1, 6);
+            AddDigitalOutputChannel("do00", daqBoard, 0, 0);
+            AddDigitalOutputChannel("do01", daqBoard, 0, 1);
 
             //map the analogue channels
             string analogBoard = (string)Boards["analogOut"];
@@ -48,6 +48,8 @@ namespace DAQ.HAL
             AddAnalogOutputChannel("motShutter", analogBoard + "/ao2");
             AddAnalogOutputChannel("imagingShutter", analogBoard + "/ao3");
             AddAnalogOutputChannel("rfSwitch", analogBoard + "/ao4");
+
+            AddAnalogOutputChannel("rfAtten", analogBoard + "/ao5");
 
             //add the camera
             Instruments.Add("motCam", "/cam0");

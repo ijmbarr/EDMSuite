@@ -162,7 +162,7 @@ namespace NavAnalysis
             }
             
             horizChart.Series.Add("Horizontal");
-          //  horizChart.Titles.Add("Horiztonal");
+            horizChart.Titles.Add("Horiztonal");
         
 
             if (vertChart.Series.IndexOf("Vertical") != -1)
@@ -171,7 +171,7 @@ namespace NavAnalysis
               
             }
             vertChart.Series.Add("Vertical");
-          //  vertChart.Titles.Add("Vertical");
+            vertChart.Titles.Add("Vertical");
           
             //This doesn't yet work. Why?
             if (xmin <= 0 && ymin <= 0)
